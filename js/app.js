@@ -56,7 +56,7 @@ const chartersWrapper = heros => {
 
 const getCharacters = (amount) => {
     axios
-        .get('https://rickandmortyapi.com/api/character')
+        .get(url)
         .then(response => {
             const count = response.data.info.pages;
             const links = [...new Array(count)].map((el,i) => `${url}/?page=${i+1}`);
@@ -75,7 +75,7 @@ const getCharacters = (amount) => {
         .catch(error => console.log('Error in main Promise', error));
 };
 
+const url = 'https://rickandmortyapi.com/api/character';
 renderInApp([heroWrapper(), chartersWrapper([])]);
-
 getCharacters(8);
 
