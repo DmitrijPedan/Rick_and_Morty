@@ -8,16 +8,12 @@
  */
 const createHTMLNode = (tag, attrs, inner) => {
     const element = document.createElement(tag);
-    attrs.map(attr => {element.setAttribute(attr.name, attr.value.join(' '))});
-    inner
-        ?
-            Array.isArray(inner) ? inner.map(el => element.appendChild(el)):
-                element.innerHTML=inner
-                :null;
+    attrs.map(el => {element.setAttribute(el.name, el.value.join(' '))});
+    inner ? (Array.isArray(inner) ? inner.map(el => element.appendChild(el)) : element.innerHTML=inner) : null;
     return element;
-}
+};
 
-const renderInApp = htmlNode => {
+const renderInApp = (htmlNode) => {
     document.getElementById('app').innerHTML = ''
     htmlNode.map(el => document.getElementById('app').appendChild(el));
 }
@@ -58,29 +54,26 @@ const chartersWrapper = heros => {
     ])
 }
 
-const url = 'https://rickandmortyapi.com/api/character';
-
 const getCharacters = (amount) => {
-axios
-    .get(url)
-    .then(response => {
-        const count = response.data.info.pages;
-        const links = [...new Array(count)].map((el,i) => `${url}/?page=${i+1}`);
-        Promise.all(links.map(el => axios.get(el)))
-            .then(response => {
-                const characters = ([...new Array(response.length)]
-                    .map((el,i) => el = response[i].data.results))
-                    .flat()
-                    .reduce((arr, el) => (arr.splice(Math.random() * (arr.length + 1), 0, el), arr), []);
-                    characters.length = amount;
-                    renderInApp([heroWrapper(), chartersWrapper(characters)]);
-                    document.getElementById('spinner').setAttribute("style", "display: none");
-            })
-            .catch(error => console.log('Error in all Promise', error));
-    })
-    .catch(error => console.log('Error in main Promise', error));
+    axios
+        .get('https://rickandmortyapi.com/api/character')
+        .then(response => {
+            const count = response.data.info.pages;
+            const links = [...new Array(count)].map((el,i) => `${url}/?page=${i+1}`);
+            Promise.all(links.map(el => axios.get(el)))
+                .then(response => {
+                    const characters = ([...new Array(response.length)]
+                        .map((el,i) => el = response[i].data.results))
+                        .flat()
+                        .reduce((arr, el) => (arr.splice(Math.random() * (arr.length + 1), 0, el), arr), []);
+                        characters.length = amount;
+                        renderInApp([heroWrapper(), chartersWrapper(characters)]);
+                        document.getElementById('spinner').setAttribute("style", "display: none");
+                })
+                .catch(error => console.log('Error in all Promise', error));
+        })
+        .catch(error => console.log('Error in main Promise', error));
 };
-
 
 renderInApp([heroWrapper(), chartersWrapper([])]);
 
